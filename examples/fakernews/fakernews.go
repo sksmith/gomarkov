@@ -4,12 +4,13 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
+	"os"
 	"strings"
 	"sync"
 
-	"github.com/mb-14/gomarkov"
+	"github.com/sksmith/gomarkov"
 )
 
 const (
@@ -68,7 +69,7 @@ func buildModel() (*gomarkov.Chain, error) {
 
 func loadModel() (*gomarkov.Chain, error) {
 	var chain gomarkov.Chain
-	data, err := ioutil.ReadFile("model.json")
+	data, err := os.ReadFile("model.json")
 	if err != nil {
 		return &chain, err
 	}
@@ -86,7 +87,7 @@ func fetchHNTopStories() ([]int, error) {
 		return nil, err
 	}
 	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -102,7 +103,7 @@ func fetchHNStory(storyID int) (hnStory, error) {
 		return story, err
 	}
 	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return story, err
 	}
@@ -112,7 +113,7 @@ func fetchHNStory(storyID int) (hnStory, error) {
 
 func saveModel(chain *gomarkov.Chain) {
 	jsonObj, _ := json.Marshal(chain)
-	err := ioutil.WriteFile("model.json", jsonObj, 0644)
+	err := os.WriteFile("model.json", jsonObj, 0o644)
 	if err != nil {
 		fmt.Println(err)
 	}

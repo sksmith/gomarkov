@@ -5,13 +5,12 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"math"
 	"os"
 	"strings"
 
-	"github.com/mb-14/gomarkov"
 	"github.com/montanaflynn/stats"
+	"github.com/sksmith/gomarkov"
 )
 
 const minimumProbability = 0.05
@@ -40,7 +39,7 @@ func main() {
 			return
 		}
 		score := sequenceProbablity(model.Chain, *username)
-		normalizedScore := (score -  model.Mean) / model.StdDev
+		normalizedScore := (score - model.Mean) / model.StdDev
 		isGibberish := normalizedScore < 0
 		fmt.Printf("Score: %f | Gibberish: %t\n", normalizedScore, isGibberish)
 	}
@@ -58,14 +57,14 @@ func buildModel() model {
 
 func saveModel(model model) {
 	jsonObj, _ := json.Marshal(model)
-	err := ioutil.WriteFile("model.json", jsonObj, 0644)
+	err := os.WriteFile("model.json", jsonObj, 0o644)
 	if err != nil {
 		fmt.Println(err)
 	}
 }
 
 func loadModel() (model, error) {
-	data, err := ioutil.ReadFile("model.json")
+	data, err := os.ReadFile("model.json")
 	if err != nil {
 		return model{}, err
 	}

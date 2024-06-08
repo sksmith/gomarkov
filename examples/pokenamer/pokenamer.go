@@ -5,11 +5,10 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"strings"
 
-	"github.com/mb-14/gomarkov"
+	"github.com/sksmith/gomarkov"
 )
 
 func main() {
@@ -53,7 +52,7 @@ func getDataset(fileName string) []string {
 
 func loadModel() (*gomarkov.Chain, error) {
 	var chain gomarkov.Chain
-	data, err := ioutil.ReadFile("model.json")
+	data, err := os.ReadFile("model.json")
 	if err != nil {
 		return &chain, err
 	}
@@ -66,7 +65,7 @@ func loadModel() (*gomarkov.Chain, error) {
 
 func saveModel(chain *gomarkov.Chain) {
 	jsonObj, _ := json.Marshal(chain)
-	err := ioutil.WriteFile("model.json", jsonObj, 0644)
+	err := os.WriteFile("model.json", jsonObj, 0o644)
 	if err != nil {
 		fmt.Println(err)
 	}
